@@ -3,7 +3,7 @@ package com.example.newsapplication.ui.viewModel
 import NewsViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.newsapplication.domain.NewsUseCase
+import com.example.newsapplication.domain.useCase.NewsUseCase
 
 class NewsViewModelFactory(
     private val useCase: NewsUseCase

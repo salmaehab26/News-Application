@@ -1,6 +1,8 @@
 package com.example.newsapplication.ui.adapter
 
 import NewsDiffUtil
+import android.content.Context
+import android.content.Intent
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -9,8 +11,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.apiintegrationapp.response.Article
 import com.example.newsapplication.databinding.NewsItemBinding
+import com.example.newsapplication.ui.activity.NewsDetailActivity
 
-class NewsAdapter : RecyclerView.Adapter<NewsAdapter.ViewHolder>() {
+class NewsAdapter (   private val context: Context): RecyclerView.Adapter<NewsAdapter.ViewHolder>() {
 
     private val newsList = mutableListOf<Article>()
 
@@ -33,6 +36,11 @@ class NewsAdapter : RecyclerView.Adapter<NewsAdapter.ViewHolder>() {
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(newsList[position])
+        holder.itemView.setOnClickListener {
+            val intent = Intent(context, NewsDetailActivity::class.java)
+            intent.putExtra("article", newsList[position])
+            context.startActivity(intent)
+        }
     }
 
     override fun getItemCount(): Int = newsList.size
