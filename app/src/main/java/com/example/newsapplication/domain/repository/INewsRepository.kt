@@ -4,6 +4,6 @@ import com.example.apiintegrationapp.response.Article
 import kotlinx.coroutines.flow.Flow
 
 interface INewsRepository {
-    fun getRemoteNews(): Flow<List<Article>>
+    suspend fun getRemoteNews(page: Int, pageSize: Int): List<Article>
     fun getLocalNews(): Flow<List<Article>>
 }

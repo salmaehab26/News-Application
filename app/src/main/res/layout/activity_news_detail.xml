@@ -1,10 +1,21 @@
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <variable
+            name="viewModel"
+            type="com.example.newsapplication.ui.viewModel.NewsDetailViewModel" />
+    </data>
+
+<ScrollView
+
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <LinearLayout
         android:orientation="vertical"
         android:padding="16dp"
+
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -12,10 +23,14 @@
             android:id="@+id/image"
             android:layout_width="match_parent"
             android:layout_height="200dp"
+            app:imageUrl="@{viewModel.article.urlToImage}"
+
             android:scaleType="centerCrop" />
 
         <TextView
             android:id="@+id/title"
+            android:text="@{viewModel.article.title}"
+
             android:textStyle="bold"
             android:textSize="18sp"
             android:paddingTop="8dp"
@@ -23,16 +38,10 @@
             android:layout_height="wrap_content" />
 
         <TextView
-            android:id="@+id/source"
-            android:textSize="14sp"
-            android:textColor="#888"
-            android:paddingTop="4dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-        <TextView
             android:id="@+id/date"
             android:textSize="14sp"
+            android:text="@{viewModel.article.publishedAt}"
+
             android:textColor="#666"
             android:paddingTop="2dp"
             android:layout_width="match_parent"
@@ -40,9 +49,11 @@
 
         <TextView
             android:id="@+id/description"
+            android:text="@{viewModel.article.description}"
             android:paddingTop="8dp"
             android:textSize="16sp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
     </LinearLayout>
 </ScrollView>
+</layout>

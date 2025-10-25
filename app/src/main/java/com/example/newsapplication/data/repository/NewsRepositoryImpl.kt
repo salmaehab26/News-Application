@@ -1,66 +1,74 @@
 package com.example.newsapplication.data.repository
 
 import android.content.Context
-import android.util.Log
 import com.example.apiintegrationapp.response.Article
-import com.example.apiintegrationapp.response.Source
 import com.example.newsapplication.data.local.INewsDao
 import com.example.newsapplication.data.local.NewsEntity
-import com.example.newsapplication.data.remote.RetrofitInstance
+import com.example.newsapplication.data.remote.IApiManager
 import com.example.newsapplication.domain.repository.INewsRepository
-import kotlinx.coroutines.flow.Flow
 import com.example.newsapplication.utils.NetworkUtils.isNetworkAvailable
-import kotlinx.coroutines.flow.emitAll
-import kotlinx.coroutines.flow.flow
+import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class NewsRepositoryImpl(
-    private val dao: INewsDao, private val context: Context
-
+@Singleton
+class NewsRepositoryImpl @Inject constructor(
+    private val dao: INewsDao,
+    @ApplicationContext private val context: Context,
+    private val api: IApiManager
 ) : INewsRepository {
 
-    override fun getRemoteNews(): Flow<List<Article>> = flow {
-        if (isNetworkAvailable(context)) {
-            Log.d("NewsRepo", "Network available ✅")
+    override suspend fun getRemoteNews(page: Int, pageSize: Int): List<Article> {
+        return try {
+            if (isNetworkAvailable(context)) {
+                val response = api.getNews("us", "72f42bc2588c4688a72cf0acc7ee280f", page, pageSize)
+                val articles = response.articles ?: emptyList()
 
-            try {
-            val response = RetrofitInstance.api.getNews("us", "72f42bc2588c4688a72cf0acc7ee280f")
-            Log.d("NewsRepo", "Received ${response.articles.size} articles from API")
-
-            dao.clearAll()
-            dao.insertAll(response.articles.map {
-                NewsEntity(
-                    title = it.title ?: "",
-                    author = it.author ?: "",
-                    urlToImage = it.urlToImage ?: "",
-                    description = it.description ?: ""
-                )
-            })
-            emit(response.articles)
+                dao.insertAll(articles.map {
+                    NewsEntity(
+                        title = it.title ?: "",
+                        author = it.author ?: "",
+                        urlToImage = it.urlToImage,
+                        description = it.description
+                    )
+                })
+                articles
+            } else {
+                dao.getAllNewsOnce().map {
+                    Article(
+                        author = it.author,
+                        title = it.title,
+                        description = it.description,
+                        urlToImage = it.urlToImage,
+                        url = "",
+                        publishedAt = "",
+                        content = "",
+                        source = com.example.apiintegrationapp.response.Source("", "")
+                    )
+                }
+            }
         } catch (e: Exception) {
             e.printStackTrace()
-            emitAll(getLocalNews())
-        }
-        } else {
-            Log.d("NewsRepo", "Network not available ❌")
-
-            emitAll(getLocalNews())
+            emptyList()
         }
     }
 
-    override fun getLocalNews(): Flow<List<Article>> =
-        dao.getAllNews().map { entities ->
-            entities.map {
+    override fun getLocalNews(): Flow<List<Article>> {
+        return dao.getAllNews().map { list ->
+            list.map {
                 Article(
-                    author = it.author ?: "",
-                    content = "",
-                    description = it.description ?: "",
-                    publishedAt = "",
-                    source = Source("", ""),
-                    title = it.title ?: "",
+                    author = it.author,
+                    title = it.title,
+                    description = it.description,
+                    urlToImage = it.urlToImage,
                     url = "",
-                    urlToImage = it.urlToImage ?: ""
+                    publishedAt = "",
+                    content = "",
+                    source = com.example.apiintegrationapp.response.Source("", "")
                 )
             }
         }
+    }
 }

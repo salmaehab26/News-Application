@@ -1,3 +1,5 @@
+package com.example.newsapplication.ui.adapter
+
 import androidx.recyclerview.widget.DiffUtil
 import com.example.apiintegrationapp.response.Article
 
