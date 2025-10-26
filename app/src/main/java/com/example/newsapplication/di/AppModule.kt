@@ -1,11 +1,11 @@
 package com.example.newsapplication.di
 
-import com.example.newsapplication.data.local.INewsDao
+import com.example.newsapplication.data.dataSource.local.INewsDao
 import android.content.Context
 import androidx.room.Room
-import com.example.newsapplication.data.local.NewsDatabase
-import com.example.newsapplication.data.remote.IApiManager
-import com.example.newsapplication.data.remote.RetrofitInstance
+import com.example.newsapplication.data.dataSource.local.NewsDatabase
+import com.example.newsapplication.data.dataSource.remote.IApiManager
+import com.example.newsapplication.data.dataSource.remote.RetrofitInstance
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

@@ -1,5 +1,6 @@
-package com.example.newsapplication.data.local
+package com.example.newsapplication.data.dataSource.local
 
+import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -8,9 +9,11 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface INewsDao {
+    @Query("SELECT * FROM news ")
+    fun getAllNewsPaging(): PagingSource<Int, NewsEntity>
 
-    @Query("SELECT * FROM news")
-    fun getAllNews(): Flow<List<NewsEntity>>
+    @Query("SELECT COUNT(*) FROM news")
+    fun getNewsCount(): Flow<Int>
 
     @Query("SELECT * FROM news")
     suspend fun getAllNewsOnce(): List<NewsEntity>

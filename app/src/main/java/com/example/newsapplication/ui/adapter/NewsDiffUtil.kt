@@ -1,21 +1,13 @@
 package com.example.newsapplication.ui.adapter
 
 import androidx.recyclerview.widget.DiffUtil
-import com.example.apiintegrationapp.response.Article
+import com.example.newsapplication.data.dataSource.local.NewsEntity
 
-class NewsDiffUtil(
-    private val oldList: List<Article>,
-    private val newList: List<Article>
-) : DiffUtil.Callback() {
 
-    override fun getOldListSize() = oldList.size
-    override fun getNewListSize() = newList.size
+class DiffCallback : DiffUtil.ItemCallback<NewsEntity>() {
+    override fun areItemsTheSame(oldItem: NewsEntity, newItem: NewsEntity) =
+        oldItem.id == newItem.id
 
-    override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-        return oldList[oldItemPosition].url == newList[newItemPosition].url // unique identifier
-    }
-
-    override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-        return oldList[oldItemPosition] == newList[newItemPosition]
-    }
+    override fun areContentsTheSame(oldItem: NewsEntity, newItem: NewsEntity) =
+        oldItem == newItem
 }

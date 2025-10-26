@@ -1,4 +1,4 @@
-package com.example.newsapplication.data.local
+package com.example.newsapplication.data.dataSource.local
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
@@ -10,7 +10,8 @@ data class NewsEntity(
     val title: String,
     val author: String?,
     val urlToImage: String?,
-    val description: String?
+    val description: String?,
+    val publishedAt: String?,
 
 
 )

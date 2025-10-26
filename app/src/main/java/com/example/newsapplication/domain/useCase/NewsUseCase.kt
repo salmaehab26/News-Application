@@ -1,6 +1,7 @@
 package com.example.newsapplication.domain.useCase
 
-import com.example.apiintegrationapp.response.Article
+import androidx.paging.PagingData
+import com.example.newsapplication.data.dataSource.local.NewsEntity
 import com.example.newsapplication.domain.repository.INewsRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
@@ -8,7 +9,7 @@ import javax.inject.Inject
 class NewsUseCase @Inject constructor(
     private val repository: INewsRepository
 ) {
-    suspend operator fun invoke(page: Int, pageSize: Int): List<Article> {
-        return repository.getRemoteNews(page, pageSize)
+      operator fun invoke():  Flow<PagingData<NewsEntity>> {
+        return repository.getPagedNews()
     }
 }

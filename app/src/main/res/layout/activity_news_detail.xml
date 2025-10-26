@@ -2,58 +2,92 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
+
         <variable
             name="viewModel"
             type="com.example.newsapplication.ui.viewModel.NewsDetailViewModel" />
     </data>
 
-<ScrollView
-
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
     <LinearLayout
-        android:orientation="vertical"
-        android:padding="16dp"
-
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent"
+        android:background="#F8F9FA"
+        android:orientation="vertical">
 
-        <ImageView
-            android:id="@+id/image"
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/cl_toolbar"
             android:layout_width="match_parent"
-            android:layout_height="200dp"
-            app:imageUrl="@{viewModel.article.urlToImage}"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent">
 
-            android:scaleType="centerCrop" />
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="?attr/colorPrimary"
+                android:subtitle="Subtitle (optional)"
+                android:text="News Details"
+                app:navigationIcon="@drawable/baseline_arrow_back_24"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+                app:titleTextColor="@android:color/white" />
+        </com.google.android.material.appbar.AppBarLayout>
 
-        <TextView
-            android:id="@+id/title"
-            android:text="@{viewModel.article.title}"
 
-            android:textStyle="bold"
-            android:textSize="18sp"
-            android:paddingTop="8dp"
+
+
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="match_parent"
+            android:background="#F8F9FA">
 
-        <TextView
-            android:id="@+id/date"
-            android:textSize="14sp"
-            android:text="@{viewModel.article.publishedAt}"
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
 
-            android:textColor="#666"
-            android:paddingTop="2dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+                <ImageView
+                    android:id="@+id/image"
+                    android:layout_width="match_parent"
+                    android:layout_height="220dp"
+                    android:background="@drawable/rounded_corners"
+                    android:scaleType="centerCrop"
+                    app:imageUrl="@{viewModel.article.urlToImage}" />
 
-        <TextView
-            android:id="@+id/description"
-            android:text="@{viewModel.article.description}"
-            android:paddingTop="8dp"
-            android:textSize="16sp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+                <TextView
+                    android:id="@+id/date"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="12dp"
+                    android:text="@{viewModel.article.publishedAt}"
+                    android:textColor="#888"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:lineSpacingExtra="4dp"
+                    android:paddingTop="8dp"
+                    android:text="@{viewModel.article.title}"
+                    android:textColor="#222"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/description"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:lineSpacingExtra="6dp"
+                    android:paddingTop="12dp"
+                    android:text="@{viewModel.article.description}"
+                    android:textColor="#444"
+
+                    android:textSize="16sp" />
+
+            </LinearLayout>
+        </ScrollView>
+
     </LinearLayout>
-</ScrollView>
 </layout>

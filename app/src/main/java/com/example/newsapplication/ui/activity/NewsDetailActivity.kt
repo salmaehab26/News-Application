@@ -1,14 +1,11 @@
 package com.example.newsapplication.ui.activity
 
 import android.os.Bundle
-import android.widget.ImageView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.databinding.BindingAdapter
 import androidx.databinding.DataBindingUtil
-import com.bumptech.glide.Glide
-import com.example.apiintegrationapp.response.Article
 import com.example.newsapplication.R
+import com.example.newsapplication.data.dataSource.local.NewsEntity
 import com.example.newsapplication.databinding.ActivityNewsDetailBinding
 import com.example.newsapplication.ui.viewModel.NewsDetailViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -22,23 +19,27 @@ class NewsDetailActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_news_detail)
-
-        val article = intent.getParcelableExtra<Article>("article")
-        article?.let { viewModel.setArticle(it) }
-        binding.viewModel = viewModel
         binding.lifecycleOwner = this
-        intent.getParcelableExtra<Article>("article")?.let {
-            viewModel.setArticle(it)
+        binding.viewModel = viewModel
+
+        val title = intent.getStringExtra("title")
+        val description = intent.getStringExtra("description")
+        val imageUrl = intent.getStringExtra("imageUrl")
+
+        val newsEntity = NewsEntity(
+            id = 0,
+            title = title ?: "",
+            description = description,
+            urlToImage = imageUrl,
+            author = "",
+            publishedAt = ""
+        )
+
+        viewModel.setArticle(newsEntity)
+
+        binding.toolbar.setNavigationOnClickListener {
+            onBackPressedDispatcher.onBackPressed()
         }
     }
-
-
 }
-@BindingAdapter("imageUrl")
-fun loadImage(view: ImageView, url: String?) {
-    Glide.with(view.context)
-        .load(url)
-        .placeholder(R.drawable.news_en_1920x1080)
-        .error(R.drawable.ic_launcher_background)
-        .into(view)
-}
+

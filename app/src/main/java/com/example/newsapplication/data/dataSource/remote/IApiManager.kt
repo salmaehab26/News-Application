@@ -1,4 +1,4 @@
-package com.example.newsapplication.data.remote
+package com.example.newsapplication.data.dataSource.remote
 
 import com.example.apiintegrationapp.response.NewsResponse
 import retrofit2.http.GET

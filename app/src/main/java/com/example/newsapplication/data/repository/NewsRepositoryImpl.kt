@@ -1,74 +1,36 @@
 package com.example.newsapplication.data.repository
 
+import NewsRemoteMediator
 import android.content.Context
-import com.example.apiintegrationapp.response.Article
-import com.example.newsapplication.data.local.INewsDao
-import com.example.newsapplication.data.local.NewsEntity
-import com.example.newsapplication.data.remote.IApiManager
+import androidx.paging.ExperimentalPagingApi
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import com.example.newsapplication.data.dataSource.local.INewsDao
+import com.example.newsapplication.data.dataSource.local.NewsEntity
+import com.example.newsapplication.data.dataSource.remote.IApiManager
 import com.example.newsapplication.domain.repository.INewsRepository
-import com.example.newsapplication.utils.NetworkUtils.isNetworkAvailable
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
 import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
+@OptIn(ExperimentalPagingApi::class)
 class NewsRepositoryImpl @Inject constructor(
+    private val api: IApiManager,
     private val dao: INewsDao,
-    @ApplicationContext private val context: Context,
-    private val api: IApiManager
+    @ApplicationContext private val context: Context
 ) : INewsRepository {
 
-    override suspend fun getRemoteNews(page: Int, pageSize: Int): List<Article> {
-        return try {
-            if (isNetworkAvailable(context)) {
-                val response = api.getNews("us", "72f42bc2588c4688a72cf0acc7ee280f", page, pageSize)
-                val articles = response.articles ?: emptyList()
+    override fun getPagedNews(): Flow<PagingData<NewsEntity>> {
+        val pagingSourceFactory = { dao.getAllNewsPaging() }
 
-                dao.insertAll(articles.map {
-                    NewsEntity(
-                        title = it.title ?: "",
-                        author = it.author ?: "",
-                        urlToImage = it.urlToImage,
-                        description = it.description
-                    )
-                })
-                articles
-            } else {
-                dao.getAllNewsOnce().map {
-                    Article(
-                        author = it.author,
-                        title = it.title,
-                        description = it.description,
-                        urlToImage = it.urlToImage,
-                        url = "",
-                        publishedAt = "",
-                        content = "",
-                        source = com.example.apiintegrationapp.response.Source("", "")
-                    )
-                }
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-            emptyList()
-        }
+        return Pager(
+            config = PagingConfig(pageSize = 10),
+            remoteMediator = NewsRemoteMediator(api, dao, context),
+            pagingSourceFactory = pagingSourceFactory
+        ).flow
     }
-
-    override fun getLocalNews(): Flow<List<Article>> {
-        return dao.getAllNews().map { list ->
-            list.map {
-                Article(
-                    author = it.author,
-                    title = it.title,
-                    description = it.description,
-                    urlToImage = it.urlToImage,
-                    url = "",
-                    publishedAt = "",
-                    content = "",
-                    source = com.example.apiintegrationapp.response.Source("", "")
-                )
-            }
-        }
+    override fun getLocalNewsCount(): Flow<Int> {
+        return dao.getNewsCount()
     }
 }
